@@ -2,8 +2,12 @@ version: "3.8"
 
 services:
   locust:
-    build: .
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: locust-testing
+    env_file:
+      - .env
     ports:
       - "8089:8089"
-    command: >
-      locust -f locustfile.py
+    command: locust -f locustfile.py

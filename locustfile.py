@@ -8,9 +8,17 @@ load_dotenv()
 class WebsiteUser(HttpUser):
     wait_time = between(1, 3)
 
-    token = os.getenv("JWT_TOKEN")
+    token = None
 
-    headers = {"Authorization": f"Bearer {token}", "Accept": "application/json"}
+    def on_start(self):
+        self.token = os.getenv("JWT_TOKEN")
+
+        self.client.headers.update(
+            {"Authorization": f"Bearer {self.token}", "Accept": "application/json"}
+        )
+
+        if not self.token:
+            print("❌ ERROR: JWT_TOKEN is missing in Locust Container!")
 
     @task
     def get_agenda_mengajar(self):
@@ -22,4 +30,4 @@ class WebsiteUser(HttpUser):
 
     @task
     def get_unitkerja(self):
-        self.client.get("/api/v1/unitkerja")
+        self.client.get("/api/v1/unit-kerja")
